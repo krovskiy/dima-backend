@@ -24,9 +24,13 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
+    private String normalizeEmail(String email){
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+
     @Transactional
     public AuthResponse register(RegisterRequest request) {
-        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        String email = normalizeEmail(request.email()); // ASTA AM SCRIS
         if (users.existsByEmail(email))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         if (request.password().getBytes(StandardCharsets.UTF_8).length > 72)
@@ -39,9 +43,10 @@ public class AuthService {
         return response(user); // 201 plus a token: required by the existing frontend's register form.
     }
 
+    // CLEAN CODE: EVERY FUNCTION SEPARATED
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
-        User user = users.findByEmail(request.email().trim().toLowerCase(Locale.ROOT))
+        User user = users.findByEmail(normalizeEmail(request.email())) // ASTA AM SCRIS
                 .orElseThrow(this::badCredentials);
         if (!passwordMatches(request.password(), user.getPasswordHash())) throw badCredentials();
         return response(user);
