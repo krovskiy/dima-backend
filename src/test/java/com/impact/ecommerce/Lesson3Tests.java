@@ -75,7 +75,7 @@ class Lesson3Tests {
         var config = CacheConfig.configuration(mapper, ProductResponse.class);
         assertEquals(Duration.ofSeconds(60), config.getTtl());
         var original = List.of(new ProductResponse(1L, "Book", "Notes",
-                new BigDecimal("10.00"), 3, 2L, "Books"));
+                new BigDecimal("10.00"), 3, 2L, "Books", new BigDecimal("10.00")));
         var pair = config.getValueSerializationPair();
         assertEquals(original, pair.read(pair.write(original)));
         var categoryConfig = CacheConfig.configuration(mapper, CategoryResponse.class);
